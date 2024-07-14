@@ -100,7 +100,15 @@ void sortListByCount(Node** head) {
 
     *head = sorted;
 }
+static inline int widestrlen(const char *str)
+{
+    return (int)mbstowcs(NULL, str, strlen(str));
+}
 
+static inline int compensation(const char *str)
+{
+    return strlen(str) - widestrlen(str);
+}
 void printHistogram(Node* head) {
     Node* currentNode = head;
 
@@ -117,7 +125,8 @@ void printHistogram(Node* head) {
     // Print the histogram with proper formatting
     currentNode = head;
     while (currentNode != NULL) {
-        printf("%-*s: %d\n", maxLength, currentNode->label, currentNode->count);
+        int offset = compensation(currentNode->label) > 0 ? maxLength - widestrlen(currentNode->label) : maxLength;
+        printf("%-*s: %d\n", offset, currentNode->label, currentNode->count);
         currentNode = currentNode->next_ptr;
     }
 }
